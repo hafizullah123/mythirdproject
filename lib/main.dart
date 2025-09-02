@@ -30,6 +30,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: false, // Disable top SafeArea (no status bar padding)
+      bottom: false, // Disable bottom SafeArea (no navigation bar padding)
       child: Scaffold(
         // App bar with title and notification icon
         appBar: AppBar(
