@@ -21,11 +21,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Home page widget
-class MyHomePage extends StatelessWidget {
+// Home page widget as StatefulWidget
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+// State class for MyHomePage
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0; // For BottomNavigationBar
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +46,7 @@ class MyHomePage extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Row(
             children: [
-              Text(title), // Title text
+              Text(widget.title), // Title text
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.notifications), // Notification icon
@@ -189,8 +197,11 @@ class MyHomePage extends StatelessWidget {
               label: 'Settings',
             ),
           ],
-          currentIndex: 0, // Default selected index
+          currentIndex: _selectedIndex, // Use state variable
           onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
             print('Navigation bar item $index tapped'); // Print statement
           },
         ),
