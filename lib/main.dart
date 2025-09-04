@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'data/notifire.dart';
+import 'navbar_widget.dart';
 
-// Entry point of the app
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NotificationNotifier()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-// Main app widget
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -21,43 +29,69 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Home page widget as StatefulWidget
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-// State class for MyHomePage
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0; // For BottomNavigationBar
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final notifier = Provider.of<NotificationNotifier>(context);
+
     return SafeArea(
-      top: false, // Disable top SafeArea (no status bar padding)
-      bottom: false, // Disable bottom SafeArea (no navigation bar padding)
+      top: false,
+      bottom: false,
       child: Scaffold(
-        // App bar with title and notification icon
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Row(
             children: [
-              Text(widget.title), // Title text
+              Text(widget.title),
               const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.notifications), // Notification icon
-                onPressed: () {
-                  print('Notification icon pressed'); // Print statement
-                },
+              Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications),
+                    onPressed: () {
+                      notifier.increment();
+                      print('Notification icon pressed');
+                    },
+                  ),
+                  if (notifier.notificationCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          '${notifier.notificationCount}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
         ),
-        // Drawer with DrawerHeader
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -96,14 +130,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        // Main body with background image and content
         body: Stack(
           children: [
-            // Background image (local asset)
             Positioned.fill(
               child: Image.asset("assets/images/image1.jpg", fit: BoxFit.cover),
             ),
-            // Centered container with content
             Center(
               child: Container(
                 padding: const EdgeInsets.all(16.0),
@@ -114,7 +145,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Welcome text
                     const Text(
                       'Welcome to your home page!',
                       style: TextStyle(
@@ -122,8 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 16), // Space between widgets
-                    // Row with two colored containers
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -133,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.blue,
                           child: const Center(child: Text('A')),
                         ),
-                        const SizedBox(width: 16), // Space between containers
+                        const SizedBox(width: 16),
                         Container(
                           width: 50,
                           height: 50,
@@ -142,19 +171,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16), // Space between widgets
-                    // Full width orange container
+                    const SizedBox(height: 16),
                     Container(
                       width: double.infinity,
                       height: 40,
                       color: Colors.orange,
                       child: const Center(child: Text('Full Width Container')),
                     ),
-                    const SizedBox(height: 16), // Space between widgets
-                    // Wrap widget with multiple Text widgets
+                    const SizedBox(height: 16),
                     Wrap(
-                      spacing: 8.0, // Horizontal space between children
-                      runSpacing: 4.0, // Vertical space between lines
+                      spacing: 8.0,
+                      runSpacing: 4.0,
                       children: const [
                         Text('Flutter'),
                         Text('Container'),
@@ -166,19 +193,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         Text('Text'),
                       ],
                     ),
-                    const SizedBox(height: 16), // Space between widgets
-                    // ListTile with leading icon and title
+                    const SizedBox(height: 16),
                     ListTile(
-                      leading: const Icon(Icons.person), // Leading icon
-                      title: const Text('Profile'), // Title text
-                      subtitle: const Text(
-                        'Go to your profile',
-                      ), // Subtitle text
-                      trailing: const Icon(
-                        Icons.arrow_forward,
-                      ), // Trailing icon
+                      leading: const Icon(Icons.person),
+                      title: const Text('Profile'),
+                      subtitle: const Text('Go to your profile'),
+                      trailing: const Icon(Icons.arrow_forward),
                       onTap: () {
-                        print('Profile ListTile tapped'); // Print statement
+                        print('Profile ListTile tapped');
                       },
                     ),
                   ],
@@ -187,30 +209,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        // Navigation bar at the bottom of the screen
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-          currentIndex: _selectedIndex, // Use state variable
+        bottomNavigationBar: NavbarWidget(
+          selectedIndex: _selectedIndex,
           onTap: (index) {
             setState(() {
               _selectedIndex = index;
             });
-            print('Navigation bar item $index tapped'); // Print statement
+            print('Navigation bar item $index tapped');
           },
         ),
-        // Floating action button with icon
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print('FloatingActionButton presse'); // Print statement
+            print('FloatingActionButton presse');
           },
-          child: const Icon(Icons.add), // Plus icon
+          child: const Icon(Icons.add),
           tooltip: 'drop',
         ),
       ),

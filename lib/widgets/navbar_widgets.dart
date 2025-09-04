@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 
-class NavbarWidgets extends StatefulWidget {
-  const NavbarWidgets({super.key});
+class NavbarWidget extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onTap;
 
-  @override
-  State<NavbarWidgets> createState() => _NavbarWidgetsState();
-}
+  const NavbarWidget({
+    super.key,
+    required this.selectedIndex,
+    required this.onTap,
+  });
 
-class _NavbarWidgetsState extends State<NavbarWidgets> {
-  int selectedindex = 0;
   @override
   Widget build(BuildContext context) {
-    return NavigationBar(
-      destinations: [
-        NavigationDestination(icon: icon(Icons.home), label: 'Home'),
-        NavigationDestination(icon: icon(Icons.person), label: 'profile'),
+    return BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
       ],
-      onDestinationSelected: (int value) {
-        setState(() {
-          selectedindex = value;
-        });
-      },
-      selectedIndex: selectedindex,
+      currentIndex: selectedIndex,
+      onTap: onTap,
     );
   }
 }
